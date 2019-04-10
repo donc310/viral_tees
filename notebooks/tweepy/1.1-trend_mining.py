@@ -1,13 +1,14 @@
+import os
 import argparse
 import pandas as pd
 import tweepy
 import json
 
 
-consumer_key = '45lbly1Gn7EHakhl7bpQ5gGLi'
-consumer_secret = '7ZqwU6bTU5HXdOsGG1TMQZKkFFLx5mpAucq9xpJ7U9oJ8eCoKx'
-access_token = '880488624042717186-WG2Xrl6iikjCqQTd7huAwLU4yFjkqRi'
-access_token_secret = '5j5INOPN1ScXnu4nznJ3vmksDVembNv0IR6vOo6xxixqm'
+consumer_key = os.environ['TWITTER_CONSUMER_KEY']
+consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
+access_token = os.environ['TWITTER_ACCESS_TOKEN']
+access_token_secret = os.environ['TWITTER_TOKEN_SECRET']
 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -33,6 +34,7 @@ def get_trends(input):
     trend_df = pd.read_json(json_str, orient='list')
 
     print(trend_df)
+    print(trend_df.columns)
 
     return trend_df
 
