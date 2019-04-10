@@ -20,23 +20,27 @@ CONST = {
     'united-states': 23424977
 }
 
+def find_photo_for_trend(trend_df):
+
+    vol_sort = trend_df.sort_values(by=['tweet_volume'], ascending=False
+                                    ).reset_index()
+
+    trending_list = vol_sort['name'].tolist()
+
+    for trend in trending_list:
+        results = api.search(q=trend)
+        for result in results:
+            print(result.text)
+            break
+
 
 def get_trends(input):
 
     us_trends = api.trends_place(input)
-    # search_hashtag = tweepy.Cursor(api.search, q='hashtag').items(5000)
-    # for tweet in search_hashtag:
-    #     print(json.dumps(tweet))
-    # print(json.dumps(us_trends, indent=1))
-
-
     json_str = json.dumps(us_trends[0]['trends'])
     trend_df = pd.read_json(json_str, orient='list')
 
-    print(trend_df)
-    print(trend_df.columns)
-
-    return trend_df
+    find_photo_for_trend(trend_df)
 
 
 def run(args_dict):
