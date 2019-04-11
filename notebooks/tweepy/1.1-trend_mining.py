@@ -34,7 +34,6 @@ def get_trends(input):
     trend_df = pd.read_json(json_str, orient='list')
 
     print(trend_df)
-    print(trend_df.columns)
 
     return trend_df
 

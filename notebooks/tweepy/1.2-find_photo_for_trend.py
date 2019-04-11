@@ -30,7 +30,7 @@ def find_photo_for_trend(trend_df):
     for trend in trending_list:
         results = api.search(q=trend)
         for result in results:
-            print(result.text)
+            print(result.text.encode('utf-8'))
             break
 
 
