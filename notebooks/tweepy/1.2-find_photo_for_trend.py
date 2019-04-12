@@ -37,6 +37,7 @@ def find_photo_for_trend(trend_df):
         for result in results:
             # cached_tweets.append(result)
             # cached_tweets_df = pd.DataFrame(cached_tweets)
+            import pdb; pdb.set_trace()
             print(result.text.encode('utf-8'))
             # cached_tweets_df.to_csv('cached_tweets.csv', index=0)
             break
