@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 import tweepy
 import json
+import requests
 
 
 consumer_key = os.environ['TWITTER_CONSUMER_KEY']
@@ -25,12 +26,19 @@ def find_photo_for_trend(trend_df):
     vol_sort = trend_df.sort_values(by=['tweet_volume'], ascending=False
                                     ).reset_index()
 
+    print(vol_sort['name'].head(5))
+
     trending_list = vol_sort['name'].tolist()
 
+    cached_tweets = []
+
     for trend in trending_list:
-        results = api.search(q=trend)
+        results = tweepy.Cursor(api.search, q=trend).items(10)
         for result in results:
+            # cached_tweets.append(result)
+            # cached_tweets_df = pd.DataFrame(cached_tweets)
             print(result.text.encode('utf-8'))
+            # cached_tweets_df.to_csv('cached_tweets.csv', index=0)
             break
 
 
