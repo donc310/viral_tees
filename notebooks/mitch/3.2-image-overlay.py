@@ -19,14 +19,12 @@ def resize_img(image):
     return img
 
 def overlay_transparent(background, overlay, x, y):
-
-    background_width = background.shape[1]
-    background_height = background.shape[0]
+    background_width, background_height = background.shape[:2]
 
     if x >= background_width or y >= background_height:
         return background
 
-    h, w = overlay.shape[0], overlay.shape[1]
+    h, w = overlay.shape[:2]
 
     if x + w > background_width:
         w = background_width - x
