@@ -59,7 +59,7 @@ def get_coordinates(background, overlay):
 
 
 def crop_image(y, x, image):
-    h, w = image.shape[0], image.shape[1]
+    h, w = image.shape[:2]
     return image[y:y + h, x:x + w]
 
 
