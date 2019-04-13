@@ -45,9 +45,9 @@ def refine_image_list(img_urls):
 
     return ctnr # THERE HAS TO BE A ONE LINE SOLUTION HERE
 
-urls = get_images_links('https://twitter.com/leonkozlowski/') # NOT WORKING FOR T.CO links.
+urls = get_images_links('https://twitter.com/pp8010/status/1116907934544535552/') # NOT WORKING FOR T.CO links.
 urls = refine_image_list(urls)
 
-destination = 'images/image_test_7'
+destination = 'images/open_cv_1'
 save_images(destination, urls)
 

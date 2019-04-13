@@ -1,6 +1,23 @@
 import cv2
 import numpy as np
 
+
+def resize_img(image):
+    height, width = image.shape[:2]
+    max_height = 100000
+    max_width = 175
+
+    # only shrink if img is bigger than required
+    if max_height < height or max_width < width:
+        # get scaling factor
+        scaling_factor = max_height / float(height)
+        if max_width/float(width) < scaling_factor:
+            scaling_factor = max_width / float(width)
+        # resize image
+        img = cv2.resize(image, None, fx=scaling_factor, fy=scaling_factor, interpolation=cv2.INTER_AREA)
+
+    return img
+
 def overlay_transparent(background, overlay, x, y):
 
     background_width = background.shape[1]
@@ -36,10 +53,27 @@ def overlay_transparent(background, overlay, x, y):
     return background
 
 
+def get_coordinates(background, overlay):
+    half, extra_half = background.shape[1]/2, overlay.shape[1]/2
+    return int(half - extra_half), 110
 
-background = cv2.imread('overlay/D2xVPFpU4AI32iy.jpg')
-overlay = cv2.imread('overlay/1f44d.png')
 
-x = overlay_transparent(background, overlay, 0, 0)
+def crop_image(y, x, image):
+    h, w = image.shape[0], image.shape[1]
+    return image[y:y + h, x:x + w]
 
+
+background = cv2.imread('overlay/background.jpg') # 480 by 492
+overlay = cv2.imread('overlay/test2.jpg')
+overlay = resize_img(overlay)
 import pdb; pdb.set_trace()
+if overlay.shape[0] > 100:
+    overlay = crop_image(overlay.shape[0]-100, 0, overlay)
+
+
+x, y = get_coordinates(background, overlay)
+
+img = overlay_transparent(background, overlay, x, y)
+
+cv2.imwrite('overlay/combined_test_17.jpg', img)
+
