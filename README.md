@@ -6,3 +6,8 @@ Viral-Tees is a service that aims to catch the most trending topics and offer li
 
 * **Mitchell Bregman** - *Initial work* - [Gallup]
 * **Leon Kozlowski** - *Initial work* - [Bloomberg]
+
+
+## References
+
+[Luigi Example](https://marcobonzanini.com/2015/10/24/building-data-pipelines-with-python-and-luigi/)
