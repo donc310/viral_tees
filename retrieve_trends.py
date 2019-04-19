@@ -22,7 +22,6 @@ except KeyError:
     access_token = os.getenv('TWITTER_API_TOKEN')
     access_token_secret = os.getenv('TWITTER_API_ACCESS')
 
-import pdb; pdb.set_trace()
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
@@ -83,4 +82,4 @@ if __name__ == '__main__':
 
     args_dict = vars(parser.parse_args())
     run(args_dict)
-S
+
