@@ -1,6 +1,4 @@
 import smtplib
-import pandas as pd
-
 
 class Gmail(object):
     def __init__(self, email, password, recepient):
@@ -9,7 +7,10 @@ class Gmail(object):
         self.recepient = recepient
         self.server = 'smtp.gmail.com'
         self.port = 465
+        import pdb; pdb.set_trace()
         session = smtplib.SMTP_SSL(self.server, self.port)
+        import pdb; pdb.set_trace()
+        session.ehlo()
         session.login(self.email, self.password)
         self.session = session
 
@@ -25,3 +26,6 @@ class Gmail(object):
             self.email,
             self.recepient,
             headers + "\r\n\r\n" + body)
+
+x = Gmail('support@gubr.io', 'ntmgjevtmbekmiby', 'mitchbregs@gmail.com')
+x.send_message('test_1', 'testing the body')
