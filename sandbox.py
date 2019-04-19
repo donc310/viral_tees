@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import os
 import argparse
 import pandas as pd
@@ -13,7 +15,7 @@ try:
 except KeyError:
     from dotenv import load_dotenv
 
-    load_dotenv('../../.env')
+    load_dotenv('.env')
 
     consumer_key = os.getenv('TWITTER_API_KEY')
     consumer_secret = os.getenv('TWITTER_API_SECRET')
@@ -22,11 +24,12 @@ except KeyError:
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-
+import pdb; pdb.set_trace()
 api = tweepy.API(auth)
 
 CONST = {
-    'united-states': 23424977
+    'united-states': 23424977,
+    'global': 1
 }
 
 def find_photo_for_trend(trend_df):
@@ -39,13 +42,14 @@ def find_photo_for_trend(trend_df):
     for trend in trending_list:
         results = api.search(q=trend)
         for result in results:
-            print(result.text)
+            print(result.text.encode('utf-8'))
             import pdb; pdb.set_trace()
             break
 
 
 def get_trends(input):
 
+    import pdb; pdb.set_trace()
     us_trends = api.trends_place(input)
     json_str = json.dumps(us_trends[0]['trends'])
     trend_df = pd.read_json(json_str, orient='list')
@@ -74,7 +78,9 @@ if __name__ == '__main__':
         help='Select region in which trends to chose from.',
         default='',
         choices=[
-            'united-states'])
+            'united-states',
+            'global',
+        ])
 
     args_dict = vars(parser.parse_args())
     run(args_dict)
