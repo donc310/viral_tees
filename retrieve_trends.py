@@ -6,6 +6,9 @@ import pandas as pd
 import tweepy
 import json
 
+# For debugging. Remove later!
+import gnureadline
+from pprint import pprint
 
 try:
     consumer_key = os.environ['TWITTER_CONSUMER_KEY']
@@ -26,60 +29,70 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-CONST = {
-    'united-states': 23424977,
-    'global': 1
+'''
+Here we have defined variables holding
+WOEID (http://woeid.rosselliot.co.nz/lookup/)
+of 14 largest metropolitan areas in the
+United States.
+'''
+metro = {
+    'global': 1,
+    'usa': 23424977,
+    'usa-nyc': 2459115,
+    'usa-lax': 2442047,
+    'usa-chi': 2379574,
+    'usa-dal': 2388929,
+    'usa-hou': 2424766,
+    'usa-wdc': 2514815,
+    'usa-mia': 2450022,
+    'usa-phi': 2471217,
+    'usa-atl': 2357024,
+    'usa-bos': 2367105,
+    'usa-phx': 2471390,
+    'usa-sfo': 2487956,
+    'usa-det': 2391585,
+    'usa-sea': 2490383
 }
 
-def find_photo_for_trend(trend_df):
 
-    vol_sort = trend_df.sort_values(by=['tweet_volume'], ascending=False
-                                    ).reset_index()
+def get_trends(location):
 
-    trending_list = vol_sort['name'].tolist()
-
-    for trend in trending_list:
-        results = api.search(q=trend)
-        for result in results:
-            print(result.text.encode('utf-8'))
-            import pdb; pdb.set_trace()
-            break
+    return api.trends_place(location)
 
 
-def get_trends(input):
+def get_trends_df(trends_json):
 
-    us_trends = api.trends_place(input)
-    json_str = json.dumps(us_trends[0]['trends'])
-    trend_df = pd.read_json(json_str, orient='list')
-
-    find_photo_for_trend(trend_df)
+    return pd.DataFrame(
+        trends_json[0]['trends']).sort_values(
+        by=['tweet_volume'],
+        ascending=False).reset_index(
+            drop=True)
 
 
 def run(args_dict):
 
     try:
-        place = args_dict['country'][0]
+        place = args_dict['location'][0]
     except IndexError:
-        place = args_dict['country']
+        place = args_dict['location']
 
-    input = CONST.get(place)
-    x = get_trends(input)
-    import pdb; pdb.set_trace()
+    location = metro[place]
+
+    trends_json = get_trends(location)
+
+    trends_df = get_trends_df(trends_json)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Service to provide viral tweets for given region.')
     parser.add_argument(
-        '-c', '--country',
-        required=False,
+        '-loc', '--location',
+        required=True,
         nargs=1,
         help='Select region in which trends to chose from.',
-        default='',
-        choices=[
-            'united-states',
-            'global',
-        ])
+        choices=[code for code in metro.keys()]
+    )
 
     args_dict = vars(parser.parse_args())
     run(args_dict)
-
