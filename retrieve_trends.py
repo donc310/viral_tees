@@ -82,6 +82,8 @@ def run(args_dict):
 
     trends_df = get_trends_df(trends_json)
 
+    return trends_json, trends_df
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
