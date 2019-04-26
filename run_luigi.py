@@ -6,11 +6,11 @@ class QueryTwitterTrends(luigi.Task):
     def requires(self):
         return []
  
-    def output(self, **kwargs):
+    def output(self, *args):
         date = datetime.now()
         str_date = date.strftime('%m%d_%Y_%H%M')
-        
-        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(kwargs, str_date))
+       
+        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(args, str_date))
  
     def run(self):
         from retrieve_trends import run as retrieve_trends
