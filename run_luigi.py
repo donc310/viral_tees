@@ -11,7 +11,7 @@ class QueryTwitterTrends(luigi.Task):
         str_date = date.strftime('%m%d_%Y_%H%M')
         kwargs.setdefault('loc', '?')
 
-        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(kwargs['loc'], str_date))
+        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(str_date, kwargs['loc']))
  
     def run(self):
         from retrieve_trends import run as retrieve_trends
