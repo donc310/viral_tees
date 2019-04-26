@@ -1,11 +1,12 @@
 import luigi
 from datetime import datetime
 
-class QueryTwitterTrends(luigi.Task):
+class QueryTwitterTrends(luigi.ExternalTask):
+    import pandas as pd
     from retrieve_trends import run as retrieve_trends
 
-    args = {
-        'country': 1;
+    args_dict = {
+        'location': ['usa-nyc']
     }
 
     date = datetime.now()
@@ -18,4 +19,6 @@ class QueryTwitterTrends(luigi.Task):
         return luigi.LocalTarget("data/trends/trends_{}.csv".format(str_date))
  
     def run(self):
-        retrieve_trends(args)
+        json_data, df_data = retrieve_trends(args_dict)
+        df_data.to_csv(self.output())
+    
