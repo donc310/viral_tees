@@ -20,17 +20,15 @@ from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-import smtplib   
-from email.mime.multipart import MIMEMultipart   
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase 
-from email import encoders
+from email.mime.base import MIMEBase
 import base64
-from urllib.error import HTTPError
 from datetime import datetime
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+
 
 def authenticate(auth_pkl):
     """Shows basic usage of the Gmail API.
@@ -59,10 +57,11 @@ def authenticate(auth_pkl):
 
     return service
 
+
 def create_message_with_attachment(
-    sender, to, subject, message_text, files):
+        sender, to, subject, message_text, files):
     """Create a message for an email.
-    
+
     Args:
         sender: Email address of the sender.
         to: Email address of the receiver.
@@ -73,7 +72,6 @@ def create_message_with_attachment(
     Returns:
         An object containing a base64url encoded email object.
   """
-
 
     message = MIMEMultipart()
 
@@ -99,7 +97,10 @@ def create_message_with_attachment(
             fp.close()
 
             filename = os.path.basename(file)
-            msg.add_header('Content-Disposition', 'attachment', filename=filename)
+            msg.add_header(
+                'Content-Disposition',
+                'attachment',
+                filename=filename)
             message.attach(msg)
     if isinstance(files, str):
         fp = open(file, 'r')
@@ -111,7 +112,9 @@ def create_message_with_attachment(
         msg.add_header('Content-Disposition', 'attachment', filename=filename)
         message.attach(msg)
 
-    return {'raw': base64.urlsafe_b64encode(message.as_string().encode('UTF-8')).decode('ascii')}
+    return {'raw': base64.urlsafe_b64encode(
+        message.as_string().encode('UTF-8')).decode('ascii')}
+
 
 def send_message(service, user_id, message):
     """Send an email message.
@@ -127,11 +130,12 @@ def send_message(service, user_id, message):
     """
     try:
         message = (service.users().messages().send(userId=user_id, body=message)
-               .execute())
+                   .execute())
         print('Message Id: {}'.format(message['id']))
         return message
     except HttpError as error:
         print('An error occurred: {}'.format(error))
+
 
 def run(args_dict):
 
@@ -140,8 +144,14 @@ def run(args_dict):
 
     auth = authenticate(args_dict['authentication'][0])
     sbj = 'ViralTees: Twitter Trends [{}]'.format(str_date)
-    msg = create_message_with_attachment('mitchbregs@gmail.com', args_dict['receivers'], sbj, 'ViralTees', args_dict['attachments'])
+    msg = create_message_with_attachment(
+        'mitchbregs@gmail.com',
+        args_dict['receivers'],
+        sbj,
+        'ViralTees',
+        args_dict['attachments'])
     send_message(auth, "me", msg)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -158,7 +168,7 @@ if __name__ == '__main__':
         required=True,
         nargs='*',
         help='Email address of recipient(s).'
-    )   
+    )
     parser.add_argument(
         '-fp', '--attachments',
         required=False,
