@@ -10,3 +10,4 @@ references/*.zip
 csvs/
 credentials.json
 token.pickle
+data/
