@@ -151,7 +151,7 @@ if __name__ == '__main__':
         '-auth', '--authentication',
         required=False,
         nargs=1,
-        default='token.pickle',
+        default=['token.pickle'],
         help="Path to Gmail API authentication credentials pickle file."
     )
     parser.add_argument(
