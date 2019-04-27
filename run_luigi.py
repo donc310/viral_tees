@@ -54,6 +54,8 @@ class TrendsTaskWrapper(luigi.WrapperTask):
         for loc in locations:
             yield QueryTwitterTrend(country_code=loc)
 
+    def run(self):
+        self.complete()
 
 class EmailTwitterTrends(luigi.ExternalTask):
 
