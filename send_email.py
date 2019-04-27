@@ -158,7 +158,7 @@ if __name__ == '__main__':
         '-to', '--receivers',
         required=True,
         nargs='*',
-        help='Email address of recepient.'
+        help='Email address of recipient.'
     )   
     parser.add_argument(
         '-fp', '--attachments',
