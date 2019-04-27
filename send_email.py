@@ -36,6 +36,8 @@ def authenticate(auth_pkl):
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
+    # https://developers.google.com/gmail/api/quickstart/python
+
     if os.path.exists(auth_pkl):
         with open(auth_pkl, 'rb') as token:
             creds = pickle.load(token)
@@ -143,13 +145,13 @@ def run(args_dict):
     auth = authenticate(args_dict['authentication'][0])
     sbj = 'ViralTees: Twitter Trends [{}]'.format(str_date)
     msg = create_message_with_attachment(
-        'leonkozlowski@gmail.com',
+        'xxx@xxx.com', #config file for this
         args_dict['receivers'],
         sbj,
         'ViralTees - Final Test - {}'.format(str_date),
         args_dict['attachments'])
 
-    send_message(auth, "me", msg)
+    return auth, "me", msg
 
 
 if __name__ == '__main__':

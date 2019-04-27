@@ -2,26 +2,42 @@ import luigi
 import pickle
 from datetime import datetime
 
-class QueryTwitterTrends(luigi.ExternalTask):
+
+class QueryTwitterTrend(luigi.ExternalTask):
+
+    date = luigi.DateMinuteParameter(default=datetime.now())
+    country_code = luigi.Parameter(default='usa')
 
     def requires(self):
         return []
- 
+
     def output(self, **kwargs):
-        date = datetime.now()
-        str_date = date.strftime('%m%d_%Y_%H%M')
         kwargs.setdefault('loc', 'dummy')
 
-        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(str_date, kwargs['loc']))
- 
+        return luigi.LocalTarget(
+            "data/trends/trends_{}_{}.csv".format(self.date.strftime('%m%d_%Y_%H%M'), kwargs['loc']))
+
     def run(self):
         from retrieve_trends import run as retrieve_trends
         import pandas as pd
 
+        args_dict = {
+            'location': [self.country_code]
+        }
+
+        df_container = retrieve_trends(args_dict)
+        f = self.output(loc=self.country_code).open('w')
+        df_container[self.country_code].to_csv(f, sep=',', encoding='utf-8')
+        f.close()
+
+
+class TrendsTaskWrapper(luigi.WrapperTask):
+
+    def requires(self):
         locations = [
-                'usa-nyc', 
-                'usa-lax', 
-                'usa-chi', 
+                'usa-nyc',
+                'usa-lax',
+                'usa-chi',
                 'usa-dal',
                 'usa-hou',
                 'usa-wdc',
@@ -36,20 +52,15 @@ class QueryTwitterTrends(luigi.ExternalTask):
         ]
 
         for loc in locations:
-            args_dict = {
-                'location': [loc]
-            }
+            yield QueryTwitterTrend(country_code=loc)
 
-            json_data, df_data = retrieve_trends(args_dict)
-            f = self.output(loc=loc).open('w')
-            df_data.to_csv(f, sep=',', encoding='utf-8')
-            f.close()
-
+    def run(self):
+        self.complete()
 
 class EmailTwitterTrends(luigi.ExternalTask):
 
     def requires(self):
-        return [QueryTwitterTrends()]
+        return TrendsTaskWrapper()
 
     def output(self):
         date = datetime.now()
