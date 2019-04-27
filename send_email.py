@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START gmail_quickstart]
 from __future__ import print_function
 import argparse
 import pickle
