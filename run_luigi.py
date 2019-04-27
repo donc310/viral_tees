@@ -9,7 +9,7 @@ class QueryTwitterTrends(luigi.Task):
     def output(self, **kwargs):
         date = datetime.now()
         str_date = date.strftime('%m%d_%Y_%H%M')
-        kwargs.setdefault('loc', '?')
+        kwargs.setdefault('loc', 'dummy')
 
         return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(str_date, kwargs['loc']))
  
