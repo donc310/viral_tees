@@ -4,3 +4,6 @@ __pycache__/
 venv/
 notebooks/mitch/images/
 notebooks/mitch/overlay/
+references/code/
+references/*.zip
+.DS_Store

@@ -14,9 +14,9 @@ def resize_img(image):
         if max_width/float(width) < scaling_factor:
             scaling_factor = max_width / float(width)
         # resize image
-        img = cv2.resize(image, None, fx=scaling_factor, fy=scaling_factor, interpolation=cv2.INTER_AREA)
+        image = cv2.resize(image, None, fx=scaling_factor, fy=scaling_factor, interpolation=cv2.INTER_AREA)
 
-    return img
+    return image
 
 def overlay_transparent(background, overlay, x, y):
     background_width, background_height = background.shape[:2]
