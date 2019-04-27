@@ -146,9 +146,10 @@ def run(args_dict):
         'mitchbregs@gmail.com',
         args_dict['receivers'],
         sbj,
-        'ViralTees',
+        'ViralTees - Final Test - {}'.format(str_date),
         args_dict['attachments'])
-    send_message(auth, "me", msg)
+
+    return auth, "me", msg
 
 
 if __name__ == '__main__':
