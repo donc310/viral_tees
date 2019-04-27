@@ -2,26 +2,20 @@ import luigi
 import pickle
 from datetime import datetime
 
+
 class QueryTwitterTrends(luigi.ExternalTask):
 
     def requires(self):
         return []
- 
-    def output(self, **kwargs):
-        date = datetime.now()
-        str_date = date.strftime('%m%d_%Y_%H%M')
-        kwargs.setdefault('loc', 'dummy')
 
-        return luigi.LocalTarget("data/trends/trends_{}_{}.csv".format(str_date, kwargs['loc']))
- 
     def run(self):
         from retrieve_trends import run as retrieve_trends
         import pandas as pd
 
         locations = [
-                'usa-nyc', 
-                'usa-lax', 
-                'usa-chi', 
+                'usa-nyc',
+                'usa-lax',
+                'usa-chi',
                 'usa-dal',
                 'usa-hou',
                 'usa-wdc',
@@ -44,6 +38,13 @@ class QueryTwitterTrends(luigi.ExternalTask):
             f = self.output(loc=loc).open('w')
             df_data.to_csv(f, sep=',', encoding='utf-8')
             f.close()
+
+    def output(self, **kwargs):
+        date = datetime.now()
+        str_date = date.strftime('%m%d_%Y_%H%M')
+
+        return luigi.LocalTarget(
+            "data/trends/trends_{}_{}.csv".format(str_date, kwargs['loc']))
 
 
 class EmailTwitterTrends(luigi.ExternalTask):
