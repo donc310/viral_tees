@@ -143,13 +143,13 @@ def run(args_dict):
     auth = authenticate(args_dict['authentication'][0])
     sbj = 'ViralTees: Twitter Trends [{}]'.format(str_date)
     msg = create_message_with_attachment(
-        'mitchbregs@gmail.com',
+        'leonkozlowski@gmail.com',
         args_dict['receivers'],
         sbj,
         'ViralTees - Final Test - {}'.format(str_date),
         args_dict['attachments'])
 
-    return auth, "me", msg
+    send_message(auth, "me", msg)
 
 
 if __name__ == '__main__':
