@@ -10,25 +10,6 @@ import json
 import gnureadline
 from pprint import pprint
 
-try:
-    consumer_key = os.environ['TWITTER_CONSUMER_KEY']
-    consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
-    access_token = os.environ['TWITTER_ACCESS_TOKEN']
-    access_token_secret = os.environ['TWITTER_TOKEN_SECRET']
-except KeyError:
-    from dotenv import load_dotenv
-
-    load_dotenv('.env')
-
-    consumer_key = os.getenv('TWITTER_API_KEY')
-    consumer_secret = os.getenv('TWITTER_API_SECRET')
-    access_token = os.getenv('TWITTER_API_TOKEN')
-    access_token_secret = os.getenv('TWITTER_API_ACCESS')
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
-
 '''
 Here we have defined variables holding
 WOEID (http://woeid.rosselliot.co.nz/lookup/)
@@ -54,8 +35,31 @@ metro = {
     'usa-sea': 2490383
 }
 
+def auth():
 
-def get_trends(location):
+    try:
+        consumer_key = os.environ['TWITTER_CONSUMER_KEY']
+        consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
+        access_token = os.environ['TWITTER_ACCESS_TOKEN']
+        access_token_secret = os.environ['TWITTER_TOKEN_SECRET']
+    except KeyError:
+        from dotenv import load_dotenv
+
+        load_dotenv('.env')
+
+        consumer_key = os.getenv('TWITTER_API_KEY')
+        consumer_secret = os.getenv('TWITTER_API_SECRET')
+        access_token = os.getenv('TWITTER_API_TOKEN')
+        access_token_secret = os.getenv('TWITTER_API_ACCESS')
+
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
+
+    return api
+
+
+def get_trends(api, location):
 
     return api.trends_place(location)
 
@@ -71,29 +75,40 @@ def get_trends_df(trends_json):
 
 def run(args_dict):
 
-    try:
-        place = args_dict['location'][0]
-    except IndexError:
-        place = args_dict['location']
+    places = args_dict['location']
+    api = auth()
 
-    location = metro[place]
+    dfs = {}
 
-    trends_json = get_trends(location)
+    if isinstance(places, list):
+        for place in places:
+            location = metro[place]
+            trends_json = get_trends(api, location)
+            trends_df = get_trends_df(trends_json)
+            dfs.update({place: trends_df})
+    elif isinstance(places, str):
+        location = metro[places]
+        trends_json = get_trends(api, location)
+        trends_df = get_trends_df(trends_json)
+        dfs.update({places: trends_df})
+    else:
+        print('Incorrect argument passed.')
+        return -1
 
-    trends_df = get_trends_df(trends_json)
-
-    return trends_json, trends_df
+    return dfs
 
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(
         description='Service to provide viral tweets for given region.')
     parser.add_argument(
         '-loc', '--location',
-        required=True,
+        required=False,
         nargs=1,
         help='Select region in which trends to chose from.',
-        choices=[code for code in metro.keys()]
+        choices=[code for code in metro.keys()],
+        default=[code for code in metro.keys()]
     )
 
     args_dict = vars(parser.parse_args())
