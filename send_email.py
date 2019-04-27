@@ -163,6 +163,7 @@ if __name__ == '__main__':
         '-fp', '--attachments',
         required=False,
         nargs='*',
+        default=[],
         help='Path to attachment(s).'
     )
     args_dict = vars(parser.parse_args())
