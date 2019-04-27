@@ -7,3 +7,7 @@ notebooks/mitch/overlay/
 references/code/
 references/*.zip
 .DS_Store
+csvs/
+credentials.json
+token.pickle
+data/
