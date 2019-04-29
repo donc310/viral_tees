@@ -20,9 +20,15 @@ from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import mimetypes
+from email.message import Message
+from email.mime.audio import MIMEAudio
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
+from email.mime.application import MIMEApplication
+from email import encoders
 import base64
 from datetime import datetime
 
@@ -76,7 +82,10 @@ def create_message_with_attachment(
     message = MIMEMultipart()
 
     if isinstance(to, list):
-        message['to'] = ', '.join(to)
+        if len(to) == 1:
+            message['to'] = to[0]
+        else:
+            message['to'] = ', '.join(to)
     if isinstance(to, str):
         message['to'] = to
 
@@ -86,34 +95,53 @@ def create_message_with_attachment(
     msg = MIMEText(message_text)
     message.attach(msg)
 
-    content_type = 'application/octet-stream'
-    main_type, sub_type = content_type.split('/', 1)
-
     if isinstance(files, list):
         for file in files:
-            fp = open(file, 'r')
-            msg = MIMEBase(main_type, sub_type)
-            msg.set_payload(fp.read())
-            fp.close()
+            mimetype, encoding = mimetypes.guess_type(file)
+            if mimetype is None or encoding is not None:
+                mimetype = 'application/octet-stream'
 
-            filename = os.path.basename(file)
-            msg.add_header(
-                'Content-Disposition',
-                'attachment',
-                filename=filename)
-            message.attach(msg)
-    if isinstance(files, str):
-        fp = open(file, 'r')
-        msg = MIMEBase(main_type, sub_type)
-        msg.set_payload(fp.read())
-        fp.close()
+            main_type, sub_type = mimetype.split('/', 1)
+            
+            if main_type == 'text':
+                print("text")
+                temp = open(file, 'r')  # 'rb' will send this error: 'bytes' object has no attribute 'encode'
+                attachement = MIMEText(temp.read(), _subtype=sub_type)
+                temp.close()
 
-        filename = os.path.basename(file)
-        msg.add_header('Content-Disposition', 'attachment', filename=filename)
-        message.attach(msg)
+            elif main_type == 'image':
+                print("image")
+                temp = open(file, 'rb')
+                attachement = MIMEImage(temp.read(), _subtype=sub_type)
+                temp.close()
 
-    return {'raw': base64.urlsafe_b64encode(
-        message.as_string().encode('UTF-8')).decode('ascii')}
+            elif main_type == 'audio':
+                print("audio")
+                temp = open(file, 'rb')
+                attachement = MIMEAudio(temp.read(), _subtype=sub_type)
+                temp.close()            
+
+            elif main_type == 'application' and sub_type == 'pdf':   
+                temp = open(file, 'rb')
+                attachement = MIMEApplication(temp.read(), _subtype=sub_type)
+                temp.close()
+
+            else:                              
+                attachement = MIMEBase(main_type, sub_type)
+                temp = open(file, 'rb')
+                attachement.set_payload(temp.read())
+    
+            encoders.encode_base64(attachement)  #https://docs.python.org/3/library/email-examples.html
+            filename = file.split('/')[-1]
+            attachement.add_header('Content-Disposition', 'attachment', filename=filename) # name preview in email
+            message.attach(attachement) 
+
+
+    message_as_bytes = message.as_bytes() # the message should converted from string to bytes.
+    message_as_base64 = base64.urlsafe_b64encode(message_as_bytes) #encode in base64 (printable letters coding)
+    raw = message_as_base64.decode()  
+
+    return {'raw': raw} 
 
 
 def send_message(service, user_id, message):
@@ -145,12 +173,13 @@ def run(args_dict):
     auth = authenticate(args_dict['authentication'][0])
     sbj = 'ViralTees: Twitter Trends [{}]'.format(str_date)
     msg = create_message_with_attachment(
-        'xxx@xxx.com', #config file for this
+        'mitchbregs@gmail.com', # config file for this
         args_dict['receivers'],
         sbj,
         'ViralTees - Final Test - {}'.format(str_date),
         args_dict['attachments'])
 
+    import pdb; pdb.set_trace()
     return auth, "me", msg
 
 

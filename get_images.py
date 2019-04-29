@@ -16,11 +16,12 @@ def get_tweets_with_images(url_list):
         print(photos_url)
 
 
+
 def get_trend_csv(link):
     trends = pd.read_csv(link)
     url_list = trends['url'].tolist()
     get_tweets_with_images(url_list)
 
 if __name__ == '__main__':
-    link = 'csvs/trends_0425_2019_2323_usa-sfo.csv'
+    link = 'data/trends/trends_0425_2019_2323_usa-sfo.csv'
     get_trend_csv(link)

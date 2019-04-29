@@ -35,27 +35,25 @@ class TrendsTaskWrapper(luigi.WrapperTask):
 
     def requires(self):
         locations = [
-                'usa-nyc',
-                'usa-lax',
-                'usa-chi',
-                'usa-dal',
-                'usa-hou',
-                'usa-wdc',
-                'usa-mia',
-                'usa-phi',
-                'usa-atl',
-                'usa-bos',
-                'usa-phx',
-                'usa-sfo',
-                'usa-det',
-                'usa-sea',
+            'usa-nyc',
+            'usa-lax',
+            'usa-chi',
+            'usa-dal',
+            'usa-hou',
+            'usa-wdc',
+            'usa-mia',
+            'usa-phi',
+            'usa-atl',
+            'usa-bos',
+            'usa-phx',
+            'usa-sfo',
+            'usa-det',
+            'usa-sea',
         ]
 
         for loc in locations:
             yield QueryTwitterTrend(country_code=loc)
 
-    def run(self):
-        self.complete()
 
 class EmailTwitterTrends(luigi.ExternalTask):
 
@@ -64,7 +62,7 @@ class EmailTwitterTrends(luigi.ExternalTask):
 
     def output(self):
         date = datetime.now()
-        str_date = date.strftime('%m%d_%Y_%H%M')
+        str_date = date.strftime('%Y_%m%d_%H%M')
 
         return luigi.LocalTarget("data/trends/trends_{}.pickle".format(str_date))
 
