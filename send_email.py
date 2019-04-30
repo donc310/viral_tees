@@ -176,7 +176,7 @@ def run(args_dict):
         'mitchbregs@gmail.com', # config file for this
         args_dict['receivers'],
         sbj,
-        'ViralTees - Final Test - {}'.format(str_date),
+        'ViralTees - Last 6 Hrs - {}'.format(str_date),
         args_dict['attachments'])
 
     import pdb; pdb.set_trace()
