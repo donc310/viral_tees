@@ -37,4 +37,3 @@ tweepy==3.7.0
 uritemplate==3.0.0
 urllib3==1.24.1
 yagmail==0.11.215
-urllib3==1.24.2
