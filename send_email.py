@@ -53,9 +53,7 @@ def authenticate(auth_pkl):
         with open(auth_pkl, 'wb') as token:
             pickle.dump(creds, token)
 
-    service = build('gmail', 'v1', credentials=creds)
-
-    return service
+    return build('gmail', 'v1', credentials=creds)
 
 
 def create_message_with_attachment(
@@ -91,11 +89,9 @@ def create_message_with_attachment(
 
     if isinstance(files, list):
         for file in files:
-            fp = open(file, 'r')
-            msg = MIMEBase(main_type, sub_type)
-            msg.set_payload(fp.read())
-            fp.close()
-
+            with open(file, 'r') as fp:
+                msg = MIMEBase(main_type, sub_type)
+                msg.set_payload(fp.read())
             filename = os.path.basename(file)
             msg.add_header(
                 'Content-Disposition',
@@ -103,11 +99,9 @@ def create_message_with_attachment(
                 filename=filename)
             message.attach(msg)
     if isinstance(files, str):
-        fp = open(file, 'r')
-        msg = MIMEBase(main_type, sub_type)
-        msg.set_payload(fp.read())
-        fp.close()
-
+        with open(file, 'r') as fp:
+            msg = MIMEBase(main_type, sub_type)
+            msg.set_payload(fp.read())
         filename = os.path.basename(file)
         msg.add_header('Content-Disposition', 'attachment', filename=filename)
         message.attach(msg)
@@ -131,10 +125,10 @@ def send_message(service, user_id, message):
     try:
         message = (service.users().messages().send(userId=user_id, body=message)
                    .execute())
-        print('Message Id: {}'.format(message['id']))
+        print(f"Message Id: {message['id']}")
         return message
     except HttpError as error:
-        print('An error occurred: {}'.format(error))
+        print(f'An error occurred: {error}')
 
 
 def run(args_dict):
@@ -143,13 +137,14 @@ def run(args_dict):
     str_date = date.strftime('%m%d_%Y_%H%M')
 
     auth = authenticate(args_dict['authentication'][0])
-    sbj = 'ViralTees: Twitter Trends [{}]'.format(str_date)
+    sbj = f'ViralTees: Twitter Trends [{str_date}]'
     msg = create_message_with_attachment(
-        'xxx@xxx.com', #config file for this
+        'xxx@xxx.com',
         args_dict['receivers'],
         sbj,
-        'ViralTees - Final Test - {}'.format(str_date),
-        args_dict['attachments'])
+        f'ViralTees - Final Test - {str_date}',
+        args_dict['attachments'],
+    )
 
     return auth, "me", msg
 

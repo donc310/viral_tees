@@ -9,7 +9,7 @@ def save_images(dest, img_urls):
     for url in img_urls:
         img_data = requests.get(url).content
         filename = url.split('/')[-1]
-        with open('{}/{}'.format(dest, filename), 'wb') as handler:
+        with open(f'{dest}/{filename}', 'wb') as handler:
             handler.write(img_data)
 
 def get_images_links(tweet):
@@ -39,10 +39,7 @@ def refine_image_list(img_urls):
                                     and len(file) > 10]
     ctnr = []
     for url in img_urls:
-        for fn in clean_files:
-            if fn in url:
-                ctnr.append(url)
-
+        ctnr.extend(url for fn in clean_files if fn in url)
     return ctnr # THERE HAS TO BE A ONE LINE SOLUTION HERE
 
 urls = get_images_links('https://twitter.com/pp8010/status/1116907934544535552/') # NOT WORKING FOR T.CO links.

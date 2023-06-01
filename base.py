@@ -3,8 +3,8 @@ import requests
 import base64
 
 BASE_URL = 'https://api.twitter.com'
-API_EP = '{}/oauth2/token'.format(BASE_URL)
-TRENDS = '{}/1.1/trends/place.json?id=1'.format(BASE_URL)
+API_EP = f'{BASE_URL}/oauth2/token'
+TRENDS = f'{BASE_URL}/1.1/trends/place.json?id=1'
 
 class Api(object):
 
@@ -13,13 +13,13 @@ class Api(object):
         self.secret = secret
 
     def auth(self):
-        auth = '{}:{}'.format(self.key, self.secret).encode('ascii')
+        auth = f'{self.key}:{self.secret}'.encode('ascii')
         b64_encoded_key = base64.b64encode(auth)
         b64_encoded_key = b64_encoded_key.decode('ascii')
 
         auth_headers = {
-            'Authorization': 'Basic {}'.format(b64_encoded_key),
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            'Authorization': f'Basic {b64_encoded_key}',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         }
 
         auth_data = {
@@ -30,6 +30,7 @@ class Api(object):
 
         self.trends = requests.post(TRENDS, headers=auth_headers)
 
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
 
         return self.auth_resp

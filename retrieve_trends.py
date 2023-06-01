@@ -54,9 +54,7 @@ def auth():
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-
-    return api
+    return tweepy.API(auth)
 
 
 def get_trends(api, location):
@@ -85,12 +83,12 @@ def run(args_dict):
             location = metro[place]
             trends_json = get_trends(api, location)
             trends_df = get_trends_df(trends_json)
-            dfs.update({place: trends_df})
+            dfs[place] = trends_df
     elif isinstance(places, str):
         location = metro[places]
         trends_json = get_trends(api, location)
         trends_df = get_trends_df(trends_json)
-        dfs.update({places: trends_df})
+        dfs[places] = trends_df
     else:
         print('Incorrect argument passed.')
         return -1
@@ -103,12 +101,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Service to provide viral tweets for given region.')
     parser.add_argument(
-        '-loc', '--location',
+        '-loc',
+        '--location',
         required=False,
         nargs=1,
         help='Select region in which trends to chose from.',
-        choices=[code for code in metro.keys()],
-        default=[code for code in metro.keys()]
+        choices=list(metro.keys()),
+        default=list(metro.keys()),
     )
 
     args_dict = vars(parser.parse_args())

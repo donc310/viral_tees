@@ -12,7 +12,7 @@ def get_tweets_with_images(url_list):
         left = (str(result_set).split('href="', 1)[1])
         photo_link = left[:left.find('"')]
 
-        photos_url = 'twitter.com{}'.format(photo_link)
+        photos_url = f'twitter.com{photo_link}'
         print(photos_url)
 
 

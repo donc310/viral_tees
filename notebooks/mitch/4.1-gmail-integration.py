@@ -16,11 +16,12 @@ class Gmail(object):
 
     def send_message(self, subject, body):
         headers = [
-            "From: " + self.email,
-            "Subject: " + subject,
-            "To: " + self.recepient,
+            f"From: {self.email}",
+            f"Subject: {subject}",
+            f"To: {self.recepient}",
             "MIME-Version: 1.0",
-           "Content-Type: text/html"]
+            "Content-Type: text/html",
+        ]
         headers = "\r\n".join(headers)
         self.session.sendmail(
             self.email,

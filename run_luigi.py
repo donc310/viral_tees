@@ -15,7 +15,8 @@ class QueryTwitterTrend(luigi.ExternalTask):
         kwargs.setdefault('loc', 'dummy')
 
         return luigi.LocalTarget(
-            "data/trends/trends_{}_{}.csv".format(self.date.strftime('%m%d_%Y_%H%M'), kwargs['loc']))
+            f"data/trends/trends_{self.date.strftime('%m%d_%Y_%H%M')}_{kwargs['loc']}.csv"
+        )
 
     def run(self):
         from retrieve_trends import run as retrieve_trends
@@ -66,7 +67,7 @@ class EmailTwitterTrends(luigi.ExternalTask):
         date = datetime.now()
         str_date = date.strftime('%m%d_%Y_%H%M')
 
-        return luigi.LocalTarget("data/trends/trends_{}.pickle".format(str_date))
+        return luigi.LocalTarget(f"data/trends/trends_{str_date}.pickle")
 
     def run(self):
         from send_email import run as execute, send_message
